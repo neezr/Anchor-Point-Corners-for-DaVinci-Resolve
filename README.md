@@ -2,7 +2,8 @@
 Never adjust Anchor Points manually again.
 
 
-![AnchorPointCorners](https://github.com/neezr/Anchor-Point-Corners-for-DaVinci-Resolve/assets/145998491/9b930b10-8706-4dc0-9be0-0aa8908916c9)
+![AnchorPointCorners](https://github.com/neezr/Anchor-Point-Corners-for-DaVinci-Resolve/assets/145998491/8823f712-1dad-4e69-b2f1-8b08d7c1d4ca)
+
 
 
 ## Usage:
