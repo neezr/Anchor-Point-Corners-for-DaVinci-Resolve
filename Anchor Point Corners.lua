@@ -1,14 +1,15 @@
 -- ~ Anchor Point Corners ~
--- created by nizar / version 1.0
+-- created by nizar / version 1.1
 -- contact: http://twitter.com/nizarneezR
 
 -- Usage:
 -- Execute this script from DaVinci Resolve's dropdown menu (Workspace > Scripts)
--- Select a video clip on your Edit page and "pin" its Anchor Point to a corner or side of the screen with one of the buttons in the panel.
--- Note: Keyframes are sadly not supported by this script, because they are not callable from the API
+-- Select a video clip on your Edit page or a transform node on your Fusion page.
+-- "Pin" its Anchor Point to a corner or side of the screen with one of the buttons in the panel!
+-- Note: Timeline keyframes are sadly not supported by this script, because they are not callable from the API
 
 -- Install:
--- Copy this .lua-file into the folder "%appdata%\Blackmagic Design\DaVinci Resolve\Support\Fusion\Scripts\Edit"
+-- Copy this .lua-file into the folder "%appdata%\Blackmagic Design\DaVinci Resolve\Support\Fusion\Scripts\Utility"
 
 local ui = fu.UIManager
 local disp = bmd.UIDispatcher(ui)
@@ -102,8 +103,17 @@ end
 
 -- functions
 
+function setAnchorPointToCorner(direction) 
+	if(resolve:GetCurrentPage() == "fusion")
+	then
+		setAnchorPointToCorner_fusion(direction)
+	else --default ('edit'/'cut'/other)
+		setAnchorPointToCorner_edit(direction)
+	end
+end
 
-function setAnchorPointToCorner(direction)--'up_left', 'up', 'up_right', 'left', 'center', 'right', 'down_left', 'down', 'down_right'
+
+function setAnchorPointToCorner_edit(direction)--'up_left', 'up', 'up_right', 'left', 'center', 'right', 'down_left', 'down', 'down_right'
 	timeline = resolve:GetProjectManager():GetCurrentProject():GetCurrentTimeline()
 
 	selected_edit_clip = timeline:GetCurrentVideoItem() --video item currently under playhead, not necessarily in selection
@@ -159,6 +169,55 @@ function setAnchorPointToCorner(direction)--'up_left', 'up', 'up_right', 'left',
 		selected_edit_clip:SetProperty("AnchorPointY", -1*(TIMELINE_HEIGHT/2))
 	else
 		print("--- Error in Anchor Point Corners: Corner position was not selected. ---")
+	end
+end
+
+function setAnchorPointToCorner_fusion(direction)--'up_left', 'up', 'up_right', 'left', 'center', 'right', 'down_left', 'down', 'down_right'
+	comp = fusion:GetCurrentComp()
+	active_tool = comp.ActiveTool
+	
+	--current_pivot_x = active.Pivot[1][1]
+	--current_pivot_y = active.Pivot[1][2]
+	
+	
+	if(direction == "left")
+	then
+		--left
+		active_tool.Pivot = {0.0, 0.5}
+	elseif(direction == "right")
+	then
+		--right
+		active_tool.Pivot = {1.0, 0.5}
+	elseif(direction == "down")
+	then
+		--down
+		active_tool.Pivot = {0.5, 0.0}
+	elseif(direction == "up")
+	then
+		--up
+		active_tool.Pivot = {0.5, 1.0}
+	elseif(direction == "center")
+	then
+		--center
+		active_tool.Pivot = {0.5, 0.5}
+	elseif(direction == "up_left")
+	then
+		--up_left
+		active_tool.Pivot = {0.0, 1.0}
+	elseif(direction == "up_right")
+	then
+		--up_right
+		active_tool.Pivot = {1.0, 1.0}
+	elseif(direction == "down_left")
+	then
+		--down_left
+		active_tool.Pivot = {0.0, 0.0}
+	elseif(direction == "down_right")
+	then
+		--down_right
+		active_tool.Pivot = {1.0, 0.0}
+	else
+		print("--- Error in Anchor Point Corners: Corner position for pivot was not selected. ---")
 	end
 end
 
